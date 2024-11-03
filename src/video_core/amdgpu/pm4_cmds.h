@@ -825,4 +825,39 @@ struct PM4CmdDrawIndexIndirect {
     u32 draw_initiator; ///< Draw Initiator Register
 };
 
+struct PM4CmdSetPredication {
+    PM4Type3Header Header;
+    union {
+        u32 dw1; ///< START_ADDR_LO raw data
+        BitField<4, 27, u32> start_addr_lo; ///< [31:4] is the start address bits [31:4]. Supports a
+                                            ///< 16 byte aligned address for DB0 count
+    };
+    union {
+        u32 dw2; ///< PRED_PROPERTIES raw data
+        BitField<0, 8, u32> start_addr_hi; ///< documentation says 16 bit, but next field starts at
+                                           ///< bit 8, so probably an error
+        BitField<8, 1, u32>
+            predication_boolean; ///< Predication Boolean (valid for both ops)
+                                 ///< 0: Draw if not visible/overflow
+                                 ///< 1: Draw if visible/no overflow
+        BitField<12, 1, u32> hint;         ///< (Only valid for Zpass/Occlusion Predicate)
+                                           ///< 0: CP must wait until final ZPass counts have been written by all DBs
+                                           ///< 1: CP should read the results once, if all DBs have not written the results to memory then draw.
+        BitField<16, 2, u32> pred_op; ///< 000: Clear Predicate
+                                      ///< 001: Set ZPass Predicate
+                                      ///< 002: Set PrimCount Predicate
+                                      ///< 011 - 1xx: Reserved
+        BitField<31, 1, u32>
+            cont; ///< Continue set predication (Valid for both ZPASS). This field is used to allow
+                  ///< accumulation of ZPASS count data across cmdbuf boundaries.
+                  ///< 0: This SET_PREDICATION packet is a unique packet or the first of a series of SET_PREDICATION packets
+                  ///< 1: This SET_PREDICATION packet is a continuation of the previous one
+
+
+    };
+
+};
+
 } // namespace AmdGpu
+
+

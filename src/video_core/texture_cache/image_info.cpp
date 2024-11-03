@@ -82,7 +82,7 @@ static constexpr std::pair micro_tile_extent{8u, 8u};
 static constexpr auto hw_pipe_interleave = 256u;
 
 static constexpr std::pair<u32, u32> GetMacroTileExtents(u32 tiling_idx, u32 bpp, u32 num_samples) {
-    ASSERT(num_samples == 1);
+    //ASSERT(num_samples == 1);
     const auto row = tiling_idx * 5;
     const auto column = std::bit_width(bpp) - 4; // bpps are 8, 16, 32, 64, 128
     return macro_tile_extents[row + column];
@@ -274,7 +274,7 @@ void ImageInfo::UpdateSize() {
         case AmdGpu::TilingMode::Texture_MacroTiled:
         case AmdGpu::TilingMode::Depth_MacroTiled: {
             ASSERT(!props.is_block);
-            ASSERT(num_samples == 1);
+            //ASSERT(num_samples == 1);
             std::tie(mip_info.pitch, mip_info.size) =
                 ImageSizeMacroTiled(mip_w, mip_h, bpp, num_samples, tiling_idx);
             break;

@@ -598,6 +598,7 @@ set(SHADER_RECOMPILER src/shader_recompiler/exception.h
                       src/shader_recompiler/ir/passes/ring_access_elimination.cpp
                       src/shader_recompiler/ir/passes/shader_info_collection_pass.cpp
                       src/shader_recompiler/ir/passes/ssa_rewrite_pass.cpp
+                      src/shader_recompiler/ir/passes/srt.h
                       src/shader_recompiler/ir/abstract_syntax_list.h
                       src/shader_recompiler/ir/attribute.cpp
                       src/shader_recompiler/ir/attribute.h
@@ -619,6 +620,7 @@ set(SHADER_RECOMPILER src/shader_recompiler/exception.h
                       src/shader_recompiler/ir/type.h
                       src/shader_recompiler/ir/value.cpp
                       src/shader_recompiler/ir/value.h
+                      src/shader_recompiler/ir/srt_gvn_table.h
 )
 
 set(VIDEO_CORE src/video_core/amdgpu/liverpool.cpp
