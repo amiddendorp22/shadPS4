@@ -283,6 +283,88 @@ static u64 GetGpuClock64() {
     return static_cast<u64>(ticks);
 }
 
+enum class EventType : u32 {
+    SAMPLE_STREAMOUTSTATS1 = 1,
+    SAMPLE_STREAMOUTSTATS2 = 2,
+    SAMPLE_STREAMOUTSTATS3 = 3,
+    CACHE_FLUSH_TS = 4,
+    CONTEXT_DONE = 5,
+    CACHE_FLUSH = 6,
+    CS_PARTIAL_FLUSH = 7,
+    VGT_STREAMOUT_SYNC = 8,
+    Reserved1 = 9,
+    VGT_STREAMOUT_RESET = 10,
+    END_OF_PIPE_INCR_DE = 11,
+    END_OF_PIPE_IB_END = 12,
+    RST_PIX_CNT = 13,
+    Reserved2 = 14,
+    VS_PARTIAL_FLUSH = 15,
+    PS_PARTIAL_FLUSH = 16,
+    FLUSH_HS_OUTPUT = 17,
+    FLUSH_LS_OUTPUT = 18,
+    Reserved3 = 19,
+    CACHE_FLUSH_AND_INV_TS_EVENT = 20,
+    ZPASS_DONE = 21,
+    CACHE_FLUSH_AND_INV_EVENT = 22,
+    PERFCOUNTER_START = 23,
+    PERFCOUNTER_STOP = 24,
+    PIPELINESTAT_START = 25,
+    PIPELINESTAT_STOP = 26,
+    PERFCOUNTER_SAMPLE = 27,
+    FLUSH_ES_OUTPUT = 28,
+    FLUSH_GS_OUTPUT = 29,
+    SAMPLE_PIPELINESTAT = 30,
+    SO_VGTSTREAMOUT_FLUSH = 31,
+    SAMPLE_STREAMOUTSTATS = 32,
+    RESET_VTX_CNT = 33,
+    Reserved4 = 34,
+    Reserved5 = 35,
+    VGT_FLUSH = 36,
+    Reserved6 = 37,
+    Reserved7 = 38,
+    SC_SEND_DB_VPZ = 39,
+    BOTTOM_OF_PIPE_TS = 40,
+    Reserved8 = 41,
+    DB_CACHE_FLUSH_AND_INV = 42,
+    FLUSH_AND_INV_DB_DATA_TS = 43,
+    FLUSH_AND_INV_DB_META = 44,
+    FLUSH_AND_INV_CB_DATA_TS = 45,
+    FLUSH_AND_INV_CB_META = 46,
+    CS_DONE = 47,
+    PS_DONE = 48,
+    FLUSH_AND_INV_CB_PIXEL_DATA = 49,
+    Reserved9 = 50,
+    THREAD_TRACE_START = 51,
+    THREAD_TRACE_STOP = 52,
+    Reserved10 = 53,
+    THREAD_TRACE_FLUSH = 54,
+    THREAD_TRACE_FINISH = 55,
+    PIXEL_PIPE_STAT_CONTROL = 56,
+    PIXEL_PIPE_STAT_DUMP = 57,
+    PIXEL_PIPE_STAT_RESET = 58,
+
+};
+
+struct PM4CmdEventWrite {
+    PM4Type3Header header;
+    union {
+        u32 event_control;
+        BitField<0, 6, u32> event_type;  ///< Event type written to VGT_EVENT_INITIATOR
+        BitField<8, 4, u32> event_index; ///< Event index
+        BitField<20, 1, u32> inv_l2;     ///< Send WBINVL2 op to the TC L2 cache when EVENT_INDEX = 0111
+    };
+    u32 address_lo;
+    union {
+        u32 dw4;
+        BitField<0, 16, u32> address_hi; ///< High bits of the address
+    };
+
+    template <typename T>
+    T* Address() const {
+        return reinterpret_cast<T*>(address_lo | u64(address_hi) << 32);
+    }
+};
+
 struct PM4CmdEventWriteEop {
     PM4Type3Header header;
     union {

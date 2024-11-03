@@ -1008,6 +1008,13 @@ struct Liverpool {
         BitField<22, 2, u32> onchip;
     };
 
+    union VgtEventInitiator {
+        u32 raw;
+        BitField<0, 6, u32> event_type;      /// event type
+        BitField<18, 9, u32> address_hi;     ///< address bits 39:31 for zpass event
+        BitField<27, 1, u32> extended_event; ///< 0 for single DW event, 1 for two DW event
+    };
+
     union StreamOutConfig {
         u32 raw;
         struct {
@@ -1136,7 +1143,8 @@ struct Liverpool {
             IndexBufferType index_buffer_type;
             INSERT_PADDING_WORDS(0xA2A1 - 0xA29E - 2);
             u32 enable_primitive_id;
-            INSERT_PADDING_WORDS(3);
+            INSERT_PADDING_WORDS(2);
+            VgtEventInitiator vgt_event_initiator;
             u32 enable_primitive_restart;
             INSERT_PADDING_WORDS(0xA2A8 - 0xA2A5 - 1);
             u32 vgt_instance_step_rate_0;
@@ -1382,6 +1390,7 @@ static_assert(GFX6_3D_REG_INDEX(vgt_gs_out_prim_type) == 0xA29B);
 static_assert(GFX6_3D_REG_INDEX(index_size) == 0xA29D);
 static_assert(GFX6_3D_REG_INDEX(index_buffer_type) == 0xA29F);
 static_assert(GFX6_3D_REG_INDEX(enable_primitive_id) == 0xA2A1);
+static_assert(GFX6_3D_REG_INDEX(vgt_event_initiator) == 0xA2A4);
 static_assert(GFX6_3D_REG_INDEX(enable_primitive_restart) == 0xA2A5);
 static_assert(GFX6_3D_REG_INDEX(vgt_instance_step_rate_0) == 0xA2A8);
 static_assert(GFX6_3D_REG_INDEX(vgt_instance_step_rate_1) == 0xA2A9);
